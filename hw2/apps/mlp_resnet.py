@@ -66,14 +66,14 @@ def epoch(dataloader, model, opt=None):
         for batch in dataloader:
             opt.reset_grad()
             batch_X, batch_y = batch
-            loss = nn.SoftmaxLoss()(model(nn.Flatten()(batch_X)), batch_y)
+            pred = model(nn.Flatten()(batch_X))
+            loss = nn.SoftmaxLoss()(pred, batch_y)
             loss.backward()
-            _, err = loss_err(
-                model(nn.Flatten()(batch_X)), batch_y)
+            opt.step()
+            _, err = loss_err(pred.data, batch_y)
             err_cum += err
             loss_cum += loss.numpy() * batch_y.shape[0]
             num_sample += batch_y.shape[0]
-            opt.step()
         return err_cum / num_sample, loss_cum / num_sample
 
     # END YOUR SOLUTION

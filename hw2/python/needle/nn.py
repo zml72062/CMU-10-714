@@ -172,8 +172,9 @@ class BatchNorm1d(Module):
                 self.momentum * var.data
             return (self.weight / (var + self.eps) ** 0.5).broadcast_to(
                 x.shape) * x_unbiased + self.bias.broadcast_to(x.shape)
-        return (x-self.running_mean.broadcast_to(x.shape)) / \
-            (self.running_var + self.eps).broadcast_to(x.shape) ** 0.5
+        return self.weight.broadcast_to(x.shape) * (x - self.running_mean.broadcast_to(
+            x.shape)) / (self.running_var + self.eps).broadcast_to(x.shape) ** 0.5 + \
+            self.bias.broadcast_to(x.shape)
         # END YOUR SOLUTION
 
 
